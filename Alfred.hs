@@ -1,18 +1,27 @@
 module Alfred (
-	begin ,
-	end ,
-	addItem ,
-	addItemBasic ,
-	getAlfredDataFileContents ,
-	putAlfredDataFileContents ,
-	getAlfredCacheFileContents ,
-	putAlfredCacheFileContents
-	) where
+  begin ,
+  end ,
+  addItem ,
+  addItemBasic ,
+  condAddItemSubTitle ,
+  condAddItemTitle ,
+  condAddItemBasicSubTitle ,
+  condAddItemBasicTitle ,
+  getAlfredDataFileContents ,
+  putAlfredDataFileContents ,
+  getAlfredCacheFileContents ,
+  putAlfredCacheFileContents
+) where
 
 import System.Process
 import System.Directory
 import System.Environment
 import Text.HTML.TagSoup
+import Data.List
+import Data.Char
+
+toWordLower :: String -> String
+toWordLower a = map toLower a
 
 cacheDirBasic :: String
 cacheDirBasic = "/Library/Caches/com.runningwithcrayons.Alfred-2/Workflow Data/"
@@ -32,46 +41,62 @@ addItem a b c d e f g = "<item uid=\"" ++ a ++ "\" arg=\""++ b ++ "\" valid=\""+
 addItemBasic ::  String -> String -> String -> String -> String
 addItemBasic a b c d = addItem a b "yes" "" c d "icon.png"
 
+condAddItemTitle :: String -> String -> String -> String -> String -> String -> String -> String -> String
+condAddItemTitle con a b c d e f g 
+  | (isInfixOf (toWordLower con) (toWordLower e)) = "<item uid=\"" ++ a ++ "\" arg=\""++ b ++ "\" valid=\""++ c ++ "\" autocomplete=\"" ++ d ++ "\"><title>" ++ e ++ "</title><subtitle>" ++ f ++ "</subtitle><icon>" ++ g ++ "</icon></item>"
+  | otherwise = ""
+
+condAddItemBasicTitle :: String -> String -> String -> String -> String -> String
+condAddItemBasicTitle con a b c d = condAddItemTitle con a b "yes" "" c d "icon.png"
+
+condAddItemSubTitle :: String -> String -> String -> String -> String -> String -> String -> String -> String
+condAddItemSubTitle con a b c d e f g 
+  | (isInfixOf (toWordLower con) (toWordLower f)) = "<item uid=\"" ++ a ++ "\" arg=\""++ b ++ "\" valid=\""++ c ++ "\" autocomplete=\"" ++ d ++ "\"><title>" ++ e ++ "</title><subtitle>" ++ f ++ "</subtitle><icon>" ++ g ++ "</icon></item>"
+  | otherwise = ""
+
+condAddItemBasicSubTitle :: String -> String -> String -> String -> String -> String
+condAddItemBasicSubTitle con a b c d = condAddItemSubTitle con a b "yes" "" c d "icon.png"
+
 getBundleID :: IO (String)
 getBundleID = do
-	tags <- fmap parseTags $ readFile "info.plist"
-	let id = fromTagText $ dropWhile (~/= "<string>") (partitions (~== "<dict>") tags !! 0) !! 1
-	return id
+  tags <- fmap parseTags $ readFile "info.plist"
+  let id = fromTagText $ dropWhile (~/= "<string>") (partitions (~== "<dict>") tags !! 0) !! 1
+  return id
 
 getAlfredDataFileContents :: String -> IO (String)
 getAlfredDataFileContents fileName = do
-	h <- getHomeDirectory
-	id <- getBundleID
-	let fPath = h ++ dataDirBasic ++ id ++ "/" ++ fileName
-	fExist <- doesFileExist fPath
-	if fExist
-	then do
-		contents <- readFile fPath
-		return contents
-	else
-		return ""
+  h <- getHomeDirectory
+  id <- getBundleID
+  let fPath = h ++ dataDirBasic ++ id ++ "/" ++ fileName
+  fExist <- doesFileExist fPath
+  if fExist
+    then do
+       contents <- readFile fPath
+       return contents
+    else
+       return ""
 
 putAlfredDataFileContents :: String -> String -> IO ()
 putAlfredDataFileContents fileName dataStr = do
-	h <- getHomeDirectory
-	id <- getBundleID
-	writeFile (h ++ dataDirBasic ++ id ++ "/" ++ fileName)  dataStr
+  h <- getHomeDirectory
+  id <- getBundleID
+  writeFile (h ++ dataDirBasic ++ id ++ "/" ++ fileName)  dataStr
 
 getAlfredCacheFileContents :: String -> IO (String)
 getAlfredCacheFileContents fileName = do
-	h <- getHomeDirectory
-	id <- getBundleID
-	let fPath = h ++ cacheDirBasic ++ id ++ "/" ++ fileName
-	fExist <- doesFileExist fPath
-	if fExist
-	then do
-		contents <- readFile fPath
-		return contents
-	else
-		return ""
+  h <- getHomeDirectory
+  id <- getBundleID
+  let fPath = h ++ cacheDirBasic ++ id ++ "/" ++ fileName
+  fExist <- doesFileExist fPath
+  if fExist
+    then do
+       contents <- readFile fPath
+       return contents
+    else
+       return ""
 
 putAlfredCacheFileContents :: String -> String -> IO ()
 putAlfredCacheFileContents fileName dataStr = do
-	h <- getHomeDirectory
-	id <- getBundleID
-	writeFile (h ++ cacheDirBasic ++ id ++ "/" ++ fileName)  dataStr
+  h <- getHomeDirectory
+  id <- getBundleID
+  writeFile (h ++ cacheDirBasic ++ id ++ "/" ++ fileName)  dataStr
