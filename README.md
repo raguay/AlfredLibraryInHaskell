@@ -10,6 +10,22 @@ This adds an item to the xml list for a script filter. This function expects all
 
 This calls the **adItem** with the valid set to yes, and icon set to icon.png.
 
+**condAddItemTitle**
+
+This creates and XML item if the condition input is contained in the Title.
+
+**condAddItemBasicTitle**
+
+This uses **condAddItemTitle** to conditionally add an XML item based on the title with some of the parameters given default values.
+
+**condAddItemSubTitle**
+
+This creates and XML item if the condition input is contained in the Sub Title.
+
+**condAddItemBasicSubTitle**
+
+This uses **condAddItemSubTitle** to conditionally add an XML item based on the sub title with some of the parameters given default values.
+
 **getBundleID**
 
 This gets the Alfred Bundle ID form the workflow.
