@@ -42,16 +42,16 @@ addItemBasic ::  String -> String -> String -> String -> String
 addItemBasic a b c d = addItem a b "yes" "" c d "icon.png"
 
 condAddItemTitle :: String -> String -> String -> String -> String -> String -> String -> String -> String
-condAddItemTitle con a b c d e f g 
-  | (isInfixOf (toWordLower con) (toWordLower e)) = "<item uid=\"" ++ a ++ "\" arg=\""++ b ++ "\" valid=\""++ c ++ "\" autocomplete=\"" ++ d ++ "\"><title>" ++ e ++ "</title><subtitle>" ++ f ++ "</subtitle><icon>" ++ g ++ "</icon></item>"
+condAddItemTitle con a b c d e f g
+  | (isInfixOf (toWordLower con) (toWordLower e)) = addItem a b c d e f g
   | otherwise = ""
 
 condAddItemBasicTitle :: String -> String -> String -> String -> String -> String
 condAddItemBasicTitle con a b c d = condAddItemTitle con a b "yes" "" c d "icon.png"
 
 condAddItemSubTitle :: String -> String -> String -> String -> String -> String -> String -> String -> String
-condAddItemSubTitle con a b c d e f g 
-  | (isInfixOf (toWordLower con) (toWordLower f)) = "<item uid=\"" ++ a ++ "\" arg=\""++ b ++ "\" valid=\""++ c ++ "\" autocomplete=\"" ++ d ++ "\"><title>" ++ e ++ "</title><subtitle>" ++ f ++ "</subtitle><icon>" ++ g ++ "</icon></item>"
+condAddItemSubTitle con a b c d e f g
+  | (isInfixOf (toWordLower con) (toWordLower f)) = addItem a b c d e f g
   | otherwise = ""
 
 condAddItemBasicSubTitle :: String -> String -> String -> String -> String -> String
