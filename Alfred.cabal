@@ -1,0 +1,24 @@
+name: Alfred
+version: 1.0
+cabal-version: 1.6
+build-type: Simple
+license: MIT
+copyright: MIT
+maintainer: Richard Guay
+stability: experimental
+synopsis: A library for writing Alfred workflows
+description:
+    This library makes it easier for creating Alfred workflow using Haskell.
+category: Library
+author: Richard Guay
+extra-source-files:
+    Info.plist
+x-ghc-framework-version: 7.10.3-5.9-1
+x-last-ide-version: HfM1.2.1
+Executable Alfred
+  main-is: Alfred.hs
+  buildable: True
+  build-depends:
+      base -any,
+      directory -any,
+      process -any

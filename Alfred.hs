@@ -16,7 +16,6 @@ module Alfred (
 import System.Process
 import System.Directory
 import System.Environment
-import Text.HTML.TagSoup
 import Data.List
 import Data.Char
 
@@ -42,7 +41,7 @@ addItemBasic ::  String -> String -> String -> String -> String
 addItemBasic a b c d = addItem a b "yes" "" c d "icon.png"
 
 condAddItemTitle :: String -> String -> String -> String -> String -> String -> String -> String -> String
-condAddItemTitle con a b c d e f g
+condAddItemTitle con a b c d e f g 
   | (isInfixOf (toWordLower con) (toWordLower e)) = addItem a b c d e f g
   | otherwise = ""
 
@@ -50,24 +49,21 @@ condAddItemBasicTitle :: String -> String -> String -> String -> String -> Strin
 condAddItemBasicTitle con a b c d = condAddItemTitle con a b "yes" "" c d "icon.png"
 
 condAddItemSubTitle :: String -> String -> String -> String -> String -> String -> String -> String -> String
-condAddItemSubTitle con a b c d e f g
+condAddItemSubTitle con a b c d e f g 
   | (isInfixOf (toWordLower con) (toWordLower f)) = addItem a b c d e f g
   | otherwise = ""
 
 condAddItemBasicSubTitle :: String -> String -> String -> String -> String -> String
 condAddItemBasicSubTitle con a b c d = condAddItemSubTitle con a b "yes" "" c d "icon.png"
 
-getBundleID :: IO (String)
-getBundleID = do
-  tags <- fmap parseTags $ readFile "info.plist"
-  let id = fromTagText $ dropWhile (~/= "<string>") (partitions (~== "<dict>") tags !! 0) !! 1
-  return id
+getDataDir = getEnv "alfred_workflow_data"
+
+getCacheDir = getEnv "alfred_workflow_cache"
 
 getAlfredDataFileContents :: String -> IO (String)
 getAlfredDataFileContents fileName = do
-  h <- getHomeDirectory
-  id <- getBundleID
-  let fPath = h ++ dataDirBasic ++ id ++ "/" ++ fileName
+  dir <- getDataDir
+  let fPath = dir ++ "/" ++ fileName
   fExist <- doesFileExist fPath
   if fExist
     then do
@@ -78,15 +74,13 @@ getAlfredDataFileContents fileName = do
 
 putAlfredDataFileContents :: String -> String -> IO ()
 putAlfredDataFileContents fileName dataStr = do
-  h <- getHomeDirectory
-  id <- getBundleID
-  writeFile (h ++ dataDirBasic ++ id ++ "/" ++ fileName)  dataStr
+  dir <- getDataDir
+  writeFile (dir ++ "/" ++ fileName)  dataStr
 
 getAlfredCacheFileContents :: String -> IO (String)
 getAlfredCacheFileContents fileName = do
-  h <- getHomeDirectory
-  id <- getBundleID
-  let fPath = h ++ cacheDirBasic ++ id ++ "/" ++ fileName
+  dir <- getCacheDir
+  let fPath = dir ++ "/" ++ fileName
   fExist <- doesFileExist fPath
   if fExist
     then do
@@ -97,6 +91,6 @@ getAlfredCacheFileContents fileName = do
 
 putAlfredCacheFileContents :: String -> String -> IO ()
 putAlfredCacheFileContents fileName dataStr = do
-  h <- getHomeDirectory
-  id <- getBundleID
-  writeFile (h ++ cacheDirBasic ++ id ++ "/" ++ fileName)  dataStr
+  dir <- getCacheDir
+  writeFile (dir ++ "/" ++ fileName)  dataStr
+
