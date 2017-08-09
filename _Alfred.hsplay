@@ -1,0 +1,8 @@
+-- Haskell Playground 1.0
+addItem "num" "arg" "valid" "auto" "title" "subtitle" "icon"
+
+condAddItemBasicTitle "" "num" "arg" "title" "subtitle"
+
+(lookupEnv "HOME")
+
+getEnv "HOME"
